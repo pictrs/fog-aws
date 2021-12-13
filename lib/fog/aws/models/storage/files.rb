@@ -123,7 +123,12 @@ module Fog
         end
 
         def normalize_headers(data)
-          data.headers['Last-Modified'] = Time.parse(fetch_and_delete_header(data, 'Last-Modified'))
+          last_modified = fetch_and_delete_header(data, 'Last-Modified')
+          if last_modified
+            data.headers['Last-Modified'] = Time.parse(last_modified)
+          else
+            Fog::Logger.warning("header '#{header}' not found in response: response.inspect")
+          end
 
           etag = fetch_and_delete_header(data, 'ETag').gsub('"','')
           data.headers['ETag'] = etag
