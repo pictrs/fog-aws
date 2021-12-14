@@ -127,7 +127,7 @@ module Fog
           if last_modified
             data.headers['Last-Modified'] = Time.parse(last_modified)
           else
-            Fog::Logger.warning("header '#{header}' not found in response: response.inspect")
+            Fog::Logger.warning("header 'Last-Modified' not found in response: #{data.inspect}")
           end
 
           etag = fetch_and_delete_header(data, 'ETag').gsub('"','')
