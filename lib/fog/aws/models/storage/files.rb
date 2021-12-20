@@ -123,9 +123,9 @@ module Fog
         end
 
         def normalize_headers(data)
-          data.headers['Last-Modified'] = Time.parse(fetch_and_delete_header(data, 'Last-Modified'))
+          data.headers['Last-Modified'] = Time.parse(fetch_and_delete_header(data, 'Last-Modified', true))
 
-          etag = fetch_and_delete_header(data, 'ETag').gsub('"','')
+          etag = fetch_and_delete_header(data, 'ETag', true).gsub('"', '')
           data.headers['ETag'] = etag
 
           DASHED_HEADERS.each do |header|
@@ -136,10 +136,12 @@ module Fog
 
         private
 
-        def fetch_and_delete_header(response, header)
+        def fetch_and_delete_header(response, header, opts = {required: false})
           value = response.get_header(header)
 
-          return unless value
+          unless value
+            opts[:required] ? raise(Fog::Errors::Error.new("Expected Header missing: #{header}")) : return
+          end
 
           response.headers.keys.each do |key|
             response.headers.delete(key) if key.downcase == header.downcase
