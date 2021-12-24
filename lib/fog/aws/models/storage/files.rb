@@ -123,9 +123,9 @@ module Fog
         end
 
         def normalize_headers(data)
-          data.headers['Last-Modified'] = Time.parse(fetch_and_delete_header(data, 'Last-Modified', true))
+          data.headers['Last-Modified'] = Time.parse(fetch_and_delete_header(data, 'Last-Modified', required: true))
 
-          etag = fetch_and_delete_header(data, 'ETag', true).gsub('"', '')
+          etag = fetch_and_delete_header(data, 'ETag', required: true).gsub('"', '')
           data.headers['ETag'] = etag
 
           DASHED_HEADERS.each do |header|
